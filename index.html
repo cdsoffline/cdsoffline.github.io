@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="forest">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDS Offline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CDS OFFLINE: single-file club site (BLANK / fill-in version)
+   Everything between [ brackets ] is a placeholder for you to replace.
+   - Colors: palettes are the blocks below under "PALETTES".
+     Set the default by editing <html data-palette="..."> at the top.
+   - Text: replace each [ ... ] with your own words.
+   - Form: see the <script> at the bottom, set FORM_ENDPOINT.
+   ============================================================ */
+
+/* -------- PALETTES (riso ink pairs) -------- */
+:root{
+  --paper:#EFEAE0; --paper-2:#F7F3EB; --ink:#2742C4; --ink-2:#FF4F8B;
+  --text:#16140F; --muted:#5c574d; --line:#16140F;
+}
+html[data-palette="forest"]{ --paper:#F0EEE4; --paper-2:#F8F6EC; --ink:#1F7A4D; --ink-2:#F2A007; --text:#15140d; --muted:#54584a; --line:#15140d; }
+html[data-palette="plum"]{ --paper:#EDEBE4; --paper-2:#F6F4ED; --ink:#6A3FB5; --ink-2:#13B0B0; --text:#16121d; --muted:#585167; --line:#16121d; }
+html[data-palette="red"]{ --paper:#F0ECE2; --paper-2:#F8F4EB; --ink:#E2342B; --ink-2:#1c1c1c; --text:#1a1410; --muted:#5e554c; --line:#1a1410; }
+html[data-palette="midnight"]{ --paper:#16140F; --paper-2:#211e17; --ink:#FF6B4A; --ink-2:#46D6C8; --text:#F4EFE4; --muted:#b3ab9b; --line:#F4EFE4; }
+
+/* -------- base -------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--text);
+  font-family:"Work Sans",system-ui,sans-serif; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  transition:background .45s ease,color .45s ease;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:9;
+  opacity:.05; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-palette="midnight"] body::before{mix-blend-mode:screen;opacity:.06}
+/* faint printed-halftone screen over the paper: fills empty space without color/motion */
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:8;
+  opacity:.045; mix-blend-mode:multiply;
+  background-image:radial-gradient(var(--ink) .9px, transparent 1.2px);
+  background-size:16px 16px;
+}
+html[data-palette="midnight"] body::after{mix-blend-mode:screen;opacity:.07}
+
+a{color:inherit}
+img{max-width:100%;display:block}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.mono{font-family:"Space Mono",monospace;text-transform:uppercase;letter-spacing:.14em;font-size:.7rem}
+
+/* placeholder styling: makes every [ blank ] visibly empty */
+.ph{opacity:.42;font-weight:inherit}
+
+h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:.98;letter-spacing:-.01em}
+
+/* -------- masthead / nav -------- */
+.masthead{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:2.5px solid var(--line);transition:background .45s ease,border-color .45s ease}
+.masthead .bar{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.brand-mark{width:30px;height:auto;color:var(--ink);flex:0 0 auto}
+.brand b{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.25rem;letter-spacing:-.02em}
+.brand .dot{color:var(--ink-2)}
+.nav{display:flex;gap:22px;align-items:center}
+.nav a{font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav a:hover{border-color:var(--ink)}
+.menu-btn{display:none;background:none;border:2px solid var(--line);font-family:"Space Mono",monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;padding:7px 11px;cursor:pointer;color:inherit}
+
+/* -------- ink switcher -------- */
+.inks{display:flex;align-items:center;gap:9px}
+.inks .lbl{color:var(--muted)}
+.swatch{width:21px;height:21px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;position:relative;transition:transform .15s}
+.swatch:hover{transform:scale(1.15)}
+.swatch[aria-pressed="true"]::after{content:"";position:absolute;inset:-6px;border:1.5px solid var(--line);border-radius:50%}
+.sw-classic{background:linear-gradient(135deg,#2742C4 50%,#FF4F8B 50%)}
+.sw-forest{background:linear-gradient(135deg,#1F7A4D 50%,#F2A007 50%)}
+.sw-plum{background:linear-gradient(135deg,#6A3FB5 50%,#13B0B0 50%)}
+.sw-red{background:linear-gradient(135deg,#E2342B 50%,#1c1c1c 50%)}
+.sw-midnight{background:linear-gradient(135deg,#FF6B4A 50%,#16140F 50%)}
+
+/* -------- hero -------- */
+.hero{position:relative;padding:64px 0 72px;border-bottom:2.5px solid var(--line);overflow:hidden}
+.eyebrow{display:inline-block;background:var(--ink);color:var(--paper);padding:5px 12px;font-family:"Space Mono",monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;margin-bottom:22px}
+.hero h1{font-size:clamp(3.4rem,11vw,8rem);text-transform:uppercase}
+.hero h1 .l1{color:var(--ink);display:block}
+.hero h1 .l2{color:var(--text);display:block}
+.hero .lede{max-width:30ch;margin-top:24px;font-size:1.18rem;color:var(--text)}
+.hero .meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
+.tag{border:2px solid var(--line);padding:7px 13px;font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+.tag.fill{background:var(--ink-2);border-color:var(--ink-2);color:var(--text)}
+.hero-logo{position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:min(40vw,420px);aspect-ratio:1;z-index:1}
+.blob{position:absolute;inset:0;border-radius:50%;background:var(--ink-2);-webkit-mask-image:radial-gradient(circle,#000 60%,transparent 61%);mask-image:radial-gradient(circle,#000 60%,transparent 61%);opacity:.92}
+.hero-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74%;height:auto;color:var(--paper)}
+.blob::after{content:"";position:absolute;inset:0;border-radius:50%;background-image:radial-gradient(var(--ink) 28%,transparent 29%);background-size:13px 13px;mix-blend-mode:multiply;opacity:.55}
+html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
+.hero .wrap{position:relative;z-index:1}
+.hero-copy{position:relative;z-index:2;max-width:600px}
+
+/* -------- generic section -------- */
+.section{padding:72px 0;border-bottom:2.5px solid var(--line)}
+.kicker{color:var(--ink);margin-bottom:14px}
+.section h2{font-size:clamp(2rem,5vw,3.2rem);text-transform:uppercase;margin-bottom:8px}
+
+.about-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start;margin-top:8px}
+.about-grid p{font-size:1.12rem;margin-bottom:16px}
+.doing{list-style:none;display:flex;flex-direction:column;gap:0}
+.doing li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-top:1.5px solid var(--line)}
+.doing li:last-child{border-bottom:1.5px solid var(--line)}
+.doing .n{font-family:"Space Mono",monospace;color:var(--ink-2);font-size:.8rem;flex:0 0 auto}
+.doing .t{font-family:"Bricolage Grotesque";font-weight:700;font-size:1.05rem}
+
+.stub{background:var(--paper-2);border:2.5px solid var(--line);display:grid;grid-template-columns:1.2fr 1fr;margin-top:8px;transition:background .45s ease}
+.stub .left{padding:34px 32px;border-right:2.5px dashed var(--line)}
+.stub .right{padding:34px 32px}
+.stub .when{font-family:"Bricolage Grotesque";font-weight:800;font-size:2.1rem;line-height:1;color:var(--ink);text-transform:uppercase}
+.stub .where{margin-top:10px;font-size:1.15rem;font-weight:600}
+.stub .addr{color:var(--muted);margin-top:2px}
+.stub h3{font-size:1.05rem;text-transform:uppercase;margin-bottom:12px;color:var(--ink-2)}
+.bring{list-style:none;display:flex;flex-direction:column;gap:9px}
+.bring li{display:flex;gap:11px;align-items:flex-start;font-size:.98rem}
+.bring li::before{content:"☐";font-family:"Space Mono",monospace;color:var(--ink)}
+.stub-cta{display:inline-block;margin-top:18px;background:var(--ink);color:var(--paper);text-decoration:none;font-family:"Space Mono",monospace;font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;padding:11px 18px;border:2px solid var(--ink)}
+.stub-cta:hover{background:var(--paper);color:var(--ink)}
+
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:8px}
+.badge{border:2.5px solid var(--line);background:var(--paper-2);transition:transform .15s,background .45s ease}
+.badge:hover{transform:translateY(-4px)}
+.badge .top{background:var(--ink);color:var(--paper);font-family:"Space Mono",monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;padding:8px 14px;display:flex;justify-content:space-between}
+.badge .photo{aspect-ratio:1;background:var(--ink-2);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--paper);position:relative}
+.badge .photo::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--text) 26%,transparent 27%);background-size:11px 11px;opacity:.18}
+.badge .body{padding:14px}
+.badge .name{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.25rem;line-height:1}
+.badge .role{color:var(--muted);font-size:.92rem;margin-top:3px}
+
+.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-top:14px}
+.polaroid{background:var(--paper-2);padding:11px 11px 0;border:1.5px solid var(--line);box-shadow:4px 5px 0 var(--line);position:relative}
+.polaroid:nth-child(2n){transform:rotate(-1.6deg)}
+.polaroid:nth-child(3n){transform:rotate(1.4deg)}
+.polaroid .pic{aspect-ratio:4/3;background:var(--ink);display:flex;align-items:center;justify-content:center;color:var(--paper);font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;text-align:center;padding:10px}
+.polaroid .cap{font-family:"Space Mono",monospace;font-size:.74rem;padding:10px 4px 13px;text-align:center;color:var(--text)}
+.polaroid::before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(3deg);width:54px;height:18px;background:var(--ink-2);opacity:.85;border:1px solid var(--line)}
+
+.join{background:var(--ink);color:var(--paper);border-bottom:2.5px solid var(--line)}
+.join-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center}
+.join-mark{width:min(32vw,340px);height:auto;color:var(--paper);opacity:.96;justify-self:end}
+.join .section{border:none}
+.join .kicker{color:var(--paper);opacity:.8}
+.join h2{color:var(--paper)}
+.join .sub{max-width:42ch;margin-top:8px;font-size:1.1rem;opacity:.92}
+.sheet{background:var(--paper);color:var(--text);border:2.5px solid var(--line);box-shadow:7px 8px 0 rgba(0,0,0,.25);margin-top:28px;max-width:560px;padding:30px}
+.sheet .row{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.sheet label{font-family:"Space Mono",monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}
+.sheet input,.sheet select{font-family:"Work Sans",sans-serif;font-size:1rem;padding:11px 13px;border:2px solid var(--line);background:var(--paper-2);color:var(--text)}
+.sheet input:focus,.sheet select:focus{outline:3px solid var(--ink-2);outline-offset:1px}
+.submit{width:100%;background:var(--ink);color:var(--paper);border:2px solid var(--ink);font-family:"Space Mono",monospace;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;padding:14px;cursor:pointer;transition:transform .1s}
+.submit:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink-2)}
+.note{margin-top:13px;font-family:"Space Mono",monospace;font-size:.68rem;color:var(--muted)}
+.ok{display:none;text-align:center;padding:24px 10px}
+.ok.show{display:block}
+.ok b{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.5rem;color:var(--ink);display:block;margin-bottom:6px}
+
+.foot{padding:40px 0;font-family:"Space Mono",monospace;font-size:.74rem;color:var(--muted)}
+.foot .cols{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px}
+.foot a{color:var(--ink)}
+
+@media(max-width:760px){
+  .nav{position:fixed;inset:60px 0 auto 0;background:var(--paper);flex-direction:column;gap:0;border-bottom:2.5px solid var(--line);transform:translateY(-130%);transition:transform .3s;z-index:19}
+  .nav.open{transform:translateY(0)}
+  .nav a{padding:15px 24px;border-bottom:1.5px solid var(--line);width:100%}
+  .menu-btn{display:block}
+  .inks .lbl{display:none}
+  .inks{gap:5px}
+  .swatch{width:18px;height:18px}
+  .menu-btn{padding:5px 9px}
+  .brand b{font-size:1rem}
+  .about-grid{grid-template-columns:1fr;gap:30px}
+  .stub{grid-template-columns:1fr}
+  .stub .left{border-right:none;border-bottom:2.5px dashed var(--line)}
+  .blob{opacity:.4}
+  .hero-mark{display:none}
+  .brand-mark{display:none}
+  .join-grid{grid-template-columns:1fr}
+  .join-mark{display:none}
+}
+@media(max-width:940px){ .board{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:520px){ .board{grid-template-columns:repeat(2,1fr)} }
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;scroll-behavior:auto!important}
+  .polaroid{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- reusable logo mark: smiley wall-outlet pulling its plug (palette-aware via currentColor) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="outlet" viewBox="0 0 132 96">
+    <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="44" cy="54" r="32"/>
+      <path d="M35 47v11"/>
+      <path d="M53 47v11"/>
+      <path d="M32 64q12 10 24 0"/>
+      <path d="M76 50c18 0 24-6 26-17"/>
+      <rect x="102" y="11" width="24" height="22" rx="5"/>
+      <path d="M92 18h10"/>
+      <path d="M92 28h10"/>
+    </g>
+  </symbol>
+</svg>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="#top"><svg class="brand-mark" aria-hidden="true"><use href="#outlet"></use></svg><b>CDS&nbsp;Offline<span class="dot">.</span></b></a>
+    <nav class="nav" id="nav">
+      <a href="#about">What we do</a>
+      <a href="#next">Next meeting</a>
+      <a href="#board">E-board</a>
+      <a href="#past">Past events</a>
+      <a href="#join">Join</a>
+    </nav>
+    <div class="inks" role="group" aria-label="Pick our ink color">
+      <span class="lbl mono">Ink ↓</span>
+      <button class="swatch sw-classic"  data-set="classic"  aria-pressed="false" title="Classic blue / pink"></button>
+      <button class="swatch sw-forest"   data-set="forest"   aria-pressed="true"  title="Forest"></button>
+      <button class="swatch sw-plum"     data-set="plum"     aria-pressed="false" title="Plum / aqua"></button>
+      <button class="swatch sw-red"      data-set="red"      aria-pressed="false" title="Red"></button>
+      <button class="swatch sw-midnight" data-set="midnight" aria-pressed="false" title="Midnight"></button>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">Menu</button>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Log off, show up</span>
+      <h1>
+        <span class="l1">Get</span>
+        <span class="l2">Offline</span>
+      </h1>
+      <p class="lede">A Boston University club for meeting people in person. Offline, on purpose.</p>
+      <div class="meta">
+        <span class="tag fill">Weekly meetups</span>
+        <span class="tag">Board games</span>
+        <span class="tag">Park trips</span>
+      </div>
+    </div>
+    <div class="hero-logo" aria-hidden="true">
+      <span class="blob"></span>
+      <svg class="hero-mark"><use href="#outlet"></use></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT WE DO ============ -->
+<section class="section" id="about">
+  <div class="wrap">
+    <p class="kicker mono">01 / What we do</p>
+    <h2>Community, offline.</h2>
+    <div class="about-grid">
+      <div>
+        <p>CDS Offline is a student organization dedicated to fostering community by forging connections through offline activities. Many students, especially in computer science and data science, spend much of their day online.</p>
+        <p>Our goal is to help facilitate in-person connections without the use of technology. We hold weekly events and activities, including board games, icebreakers, field trips to local parks, and more.</p>
+      </div>
+      <ul class="doing">
+        <li><span class="n mono">a/</span><span class="t">Board games</span></li>
+        <li><span class="n mono">b/</span><span class="t">Icebreakers</span></li>
+        <li><span class="n mono">c/</span><span class="t">Park field trips</span></li>
+        <li><span class="n mono">d/</span><span class="t ph">[ thing you do ]</span></li>
+        <li><span class="n mono">e/</span><span class="t ph">[ thing you do ]</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEXT MEETING ============ -->
+<section class="section" id="next">
+  <div class="wrap">
+    <p class="kicker mono">02 / Next meeting</p>
+    <h2>Catch us here.</h2>
+    <div class="stub">
+      <div class="left">
+        <div class="when ph">[ day · date · time ]</div>
+        <div class="where ph">[ location ]</div>
+        <div class="addr ph">[ address ]</div>
+        <a class="stub-cta" href="#join">Join →</a>
+      </div>
+      <div class="right">
+        <h3 class="ph">[ sub-heading ]</h3>
+        <ul class="bring">
+          <li class="ph">[ what to bring / prep ]</li>
+          <li class="ph">[ what to bring / prep ]</li>
+          <li class="ph">[ what to bring / prep ]</li>
+          <li class="ph">[ what to bring / prep ]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ E-BOARD ============ -->
+<section class="section" id="board">
+  <div class="wrap">
+    <p class="kicker mono">03 / E-board</p>
+    <h2>Meet the board.</h2>
+    <div class="board">
+      <!-- one .badge block per person -->
+      <div class="badge">
+        <div class="top"><span>CDS OFFLINE</span><span>#01</span></div>
+        <div class="photo ph">[ photo ]</div>
+        <div class="body"><div class="name ph">[ Name ]</div><div class="role">President</div></div>
+      </div>
+      <div class="badge">
+        <div class="top"><span>CDS OFFLINE</span><span>#02</span></div>
+        <div class="photo ph">[ photo ]</div>
+        <div class="body"><div class="name ph">[ Name ]</div><div class="role">Vice President</div></div>
+      </div>
+      <div class="badge">
+        <div class="top"><span>CDS OFFLINE</span><span>#03</span></div>
+        <div class="photo ph">[ photo ]</div>
+        <div class="body"><div class="name ph">[ Name ]</div><div class="role">Treasurer</div></div>
+      </div>
+      <div class="badge">
+        <div class="top"><span>CDS OFFLINE</span><span>#04</span></div>
+        <div class="photo ph">[ photo ]</div>
+        <div class="body"><div class="name ph">[ Name ]</div><div class="role">Secretary</div></div>
+      </div>
+      <div class="badge">
+        <div class="top"><span>CDS OFFLINE</span><span>#05</span></div>
+        <div class="photo ph">[ photo ]</div>
+        <div class="body"><div class="name ph">[ Name ]</div><div class="role">Co-VP (Abroad)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAST EVENTS ============ -->
+<section class="section" id="past">
+  <div class="wrap">
+    <p class="kicker mono">04 / Past events</p>
+    <h2>Where we've been.</h2>
+    <div class="wall">
+      <!-- swap .pic for an <img> when you have photos -->
+      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOIN ============ -->
+<div class="join" id="join">
+  <section class="section">
+    <div class="wrap join-grid">
+      <div class="join-copy">
+      <p class="kicker mono">05 / Join</p>
+      <h2>Come offline with us.</h2>
+      <p class="sub">Drop your email and we'll tell you when and where we meet next. No spam, no feed, just the next time we're hanging out offline.</p>
+
+      <div class="sheet">
+        <form id="signup">
+          <div class="row">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="row">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="row">
+            <label for="year">Year</label>
+            <select id="year" name="year">
+              <option>First year</option><option>Sophomore</option>
+              <option>Junior</option><option>Senior</option>
+              <option>Grad</option><option>Other</option>
+            </select>
+          </div>
+          <button class="submit" type="submit">Submit</button>
+          <p class="note" id="note">Demo mode. Set FORM_ENDPOINT in the script to collect real signups.</p>
+        </form>
+        <div class="ok" id="ok"><b>You're in.</b>We'll email you about the next meetup. See you offline.</div>
+      </div>
+      </div>
+      <svg class="join-mark" aria-hidden="true"><use href="#outlet"></use></svg>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="wrap cols">
+    <span>CDS Offline · Boston University</span>
+    <span>Made offline. Hosted online.</span>
+    <span><a href="#join">Join</a> · <a href="#" class="ph">[ email ]</a></span>
+  </div>
+</footer>
+
+<script>
+/* ===== INK SWITCHER (live palette demo) ===== */
+const root = document.documentElement;
+document.querySelectorAll('.swatch[data-set]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    root.setAttribute('data-palette', btn.dataset.set);
+    document.querySelectorAll('.swatch[data-set]').forEach(b=>b.setAttribute('aria-pressed', b===btn));
+  });
+});
+
+/* ===== mobile menu ===== */
+const nav = document.getElementById('nav');
+document.getElementById('menuBtn').addEventListener('click',()=>nav.classList.toggle('open'));
+nav.addEventListener('click',e=>{ if(e.target.tagName==='A') nav.classList.remove('open'); });
+
+/* ===== SIGNUP FORM =====
+   Set FORM_ENDPOINT to a Tally ("https://tally.so/r/XXXX") or
+   Formspree ("https://formspree.io/f/XXXX") URL to collect emails.
+   Or replace the whole .sheet block with a Google Form <iframe> (free, unlimited).
+   Leave "" for demo mode. */
+const FORM_ENDPOINT = "";
+
+const form = document.getElementById('signup');
+const ok   = document.getElementById('ok');
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if(!FORM_ENDPOINT){ form.style.display='none'; ok.classList.add('show'); return; }
+  try{
+    const res = await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
+    if(res.ok){ form.style.display='none'; ok.classList.add('show'); }
+    else { document.getElementById('note').textContent='Something went wrong. Try again.'; }
+  }catch(err){ document.getElementById('note').textContent='Network error. Try again.'; }
+});
+</script>
+</body>
+</html>

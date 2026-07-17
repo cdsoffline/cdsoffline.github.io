@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-palette="forest">
+<html lang="en" data-palette="slate">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,11 +21,13 @@
 :root{
   --paper:#EFEAE0; --paper-2:#F7F3EB; --ink:#2742C4; --ink-2:#FF4F8B;
   --text:#16140F; --muted:#5c574d; --line:#16140F;
+  --on-ink2:var(--text); /* text color used on --ink-2 fills; palettes with dark ink-2 override */
 }
 html[data-palette="forest"]{ --paper:#F0EEE4; --paper-2:#F8F6EC; --ink:#1F7A4D; --ink-2:#F2A007; --text:#15140d; --muted:#54584a; --line:#15140d; }
 html[data-palette="plum"]{ --paper:#EDEBE4; --paper-2:#F6F4ED; --ink:#6A3FB5; --ink-2:#13B0B0; --text:#16121d; --muted:#585167; --line:#16121d; }
-html[data-palette="red"]{ --paper:#F0ECE2; --paper-2:#F8F4EB; --ink:#E2342B; --ink-2:#1c1c1c; --text:#1a1410; --muted:#5e554c; --line:#1a1410; }
-html[data-palette="midnight"]{ --paper:#16140F; --paper-2:#211e17; --ink:#FF6B4A; --ink-2:#46D6C8; --text:#F4EFE4; --muted:#b3ab9b; --line:#F4EFE4; }
+html[data-palette="red"]{ --paper:#F0ECE2; --paper-2:#F8F4EB; --ink:#E2342B; --ink-2:#1c1c1c; --text:#1a1410; --muted:#5e554c; --line:#1a1410; --on-ink2:var(--paper); }
+html[data-palette="midnight"]{ --paper:#16140F; --paper-2:#211e17; --ink:#FF6B4A; --ink-2:#46D6C8; --text:#F4EFE4; --muted:#b3ab9b; --line:#F4EFE4; --on-ink2:var(--paper); }
+html[data-palette="slate"]{ --paper:#F2F1EC; --paper-2:#FAF9F6; --ink:#1D3557; --ink-2:#34383E; --text:#1A1A18; --muted:#5A5850; --line:#1A1A18; --on-ink2:var(--paper); }
 
 /* -------- base -------- */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -78,7 +80,7 @@ h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-heigh
 /* -------- ink switcher -------- */
 .inks{display:flex;align-items:center;gap:9px}
 .inks .lbl{color:var(--muted)}
-.swatch{width:21px;height:21px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;position:relative;transition:transform .15s}
+.swatch{width:21px;height:21px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;position:relative;transition:transform .15s;flex-shrink:0}
 .swatch:hover{transform:scale(1.15)}
 .swatch[aria-pressed="true"]::after{content:"";position:absolute;inset:-6px;border:1.5px solid var(--line);border-radius:50%}
 .sw-classic{background:linear-gradient(135deg,#2742C4 50%,#FF4F8B 50%)}
@@ -86,6 +88,7 @@ h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-heigh
 .sw-plum{background:linear-gradient(135deg,#6A3FB5 50%,#13B0B0 50%)}
 .sw-red{background:linear-gradient(135deg,#E2342B 50%,#1c1c1c 50%)}
 .sw-midnight{background:linear-gradient(135deg,#FF6B4A 50%,#16140F 50%)}
+.sw-slate{background:linear-gradient(135deg,#1D3557 50%,#34383E 50%)}
 
 /* -------- hero -------- */
 .hero{position:relative;padding:64px 0 72px;border-bottom:2.5px solid var(--line);overflow:hidden}
@@ -96,7 +99,7 @@ h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-heigh
 .hero .lede{max-width:30ch;margin-top:24px;font-size:1.18rem;color:var(--text)}
 .hero .meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
 .tag{border:2px solid var(--line);padding:7px 13px;font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
-.tag.fill{background:var(--ink-2);border-color:var(--ink-2);color:var(--text)}
+.tag.fill{background:var(--ink-2);border-color:var(--ink-2);color:var(--on-ink2)}
 .hero-logo{position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:min(40vw,420px);aspect-ratio:1;z-index:1}
 .blob{position:absolute;inset:0;border-radius:50%;background:var(--ink-2);-webkit-mask-image:radial-gradient(circle,#000 60%,transparent 61%);mask-image:radial-gradient(circle,#000 60%,transparent 61%);opacity:.92}
 .hero-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74%;height:auto;color:var(--paper)}
@@ -135,7 +138,7 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
 .badge{border:2.5px solid var(--line);background:var(--paper-2);transition:transform .15s,background .45s ease}
 .badge:hover{transform:translateY(-4px)}
 .badge .top{background:var(--ink);color:var(--paper);font-family:"Space Mono",monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;padding:8px 14px;display:flex;justify-content:space-between}
-.badge .photo{aspect-ratio:1;background:var(--ink-2);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--paper);position:relative}
+.badge .photo{aspect-ratio:1;background:var(--ink-2);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--on-ink2);position:relative}
 .badge .photo::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--text) 26%,transparent 27%);background-size:11px 11px;opacity:.18}
 .badge .body{padding:14px}
 .badge .name{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.25rem;line-height:1}
@@ -173,10 +176,6 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
 .foot a{color:var(--ink)}
 
 @media(max-width:760px){
-  .nav{position:fixed;inset:60px 0 auto 0;background:var(--paper);flex-direction:column;gap:0;border-bottom:2.5px solid var(--line);transform:translateY(-130%);transition:transform .3s;z-index:19}
-  .nav.open{transform:translateY(0)}
-  .nav a{padding:15px 24px;border-bottom:1.5px solid var(--line);width:100%}
-  .menu-btn{display:block}
   .inks .lbl{display:none}
   .inks{gap:5px}
   .swatch{width:18px;height:18px}
@@ -191,7 +190,14 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
   .join-grid{grid-template-columns:1fr}
   .join-mark{display:none}
 }
-@media(max-width:940px){ .board{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:940px){
+  .board{grid-template-columns:repeat(3,1fr)}
+  /* nav collapses here, not 760: the full bar needs ~900px+ once fonts load (labels wrap below that) */
+  .nav{position:fixed;inset:60px 0 auto 0;background:var(--paper);flex-direction:column;gap:0;border-bottom:2.5px solid var(--line);transform:translateY(-130%);transition:transform .3s;z-index:19}
+  .nav.open{transform:translateY(0)}
+  .nav a{padding:15px 24px;border-bottom:1.5px solid var(--line);width:100%}
+  .menu-btn{display:block}
+}
 @media(max-width:520px){ .board{grid-template-columns:repeat(2,1fr)} }
 @media(prefers-reduced-motion:reduce){
   *{transition:none!important;scroll-behavior:auto!important}
@@ -220,7 +226,7 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
 <!-- ============ MASTHEAD ============ -->
 <header class="masthead">
   <div class="wrap bar">
-    <a class="brand" href="#top"><svg class="brand-mark" aria-hidden="true"><use href="#outlet"></use></svg><b>CDS&nbsp;Offline<span class="dot">.</span></b></a>
+    <a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 132 96" aria-hidden="true"><use href="#outlet"></use></svg><b>CDS&nbsp;Offline<span class="dot">.</span></b></a>
     <nav class="nav" id="nav">
       <a href="#about">What we do</a>
       <a href="#next">Next meeting</a>
@@ -230,8 +236,9 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
     </nav>
     <div class="inks" role="group" aria-label="Pick our ink color">
       <span class="lbl mono">Ink ↓</span>
+      <button class="swatch sw-slate"    data-set="slate"    aria-pressed="true"  title="Slate blue / charcoal"></button>
       <button class="swatch sw-classic"  data-set="classic"  aria-pressed="false" title="Classic blue / pink"></button>
-      <button class="swatch sw-forest"   data-set="forest"   aria-pressed="true"  title="Forest"></button>
+      <button class="swatch sw-forest"   data-set="forest"   aria-pressed="false" title="Forest"></button>
       <button class="swatch sw-plum"     data-set="plum"     aria-pressed="false" title="Plum / aqua"></button>
       <button class="swatch sw-red"      data-set="red"      aria-pressed="false" title="Red"></button>
       <button class="swatch sw-midnight" data-set="midnight" aria-pressed="false" title="Midnight"></button>
@@ -260,7 +267,7 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
     </div>
     <div class="hero-logo" aria-hidden="true">
       <span class="blob"></span>
-      <svg class="hero-mark"><use href="#outlet"></use></svg>
+      <svg class="hero-mark" viewBox="0 0 132 96"><use href="#outlet"></use></svg>
     </div>
   </div>
 </section>
@@ -320,27 +327,27 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
       <!-- one .badge block per person -->
       <div class="badge">
         <div class="top"><span>CDS OFFLINE</span><span>#01</span></div>
-        <div class="photo ph">[ photo ]</div>
+        <div class="photo"><span class="ph">[ photo ]</span></div>
         <div class="body"><div class="name ph">[ Name ]</div><div class="role">President</div></div>
       </div>
       <div class="badge">
         <div class="top"><span>CDS OFFLINE</span><span>#02</span></div>
-        <div class="photo ph">[ photo ]</div>
+        <div class="photo"><span class="ph">[ photo ]</span></div>
         <div class="body"><div class="name ph">[ Name ]</div><div class="role">Vice President</div></div>
       </div>
       <div class="badge">
         <div class="top"><span>CDS OFFLINE</span><span>#03</span></div>
-        <div class="photo ph">[ photo ]</div>
+        <div class="photo"><span class="ph">[ photo ]</span></div>
         <div class="body"><div class="name ph">[ Name ]</div><div class="role">Treasurer</div></div>
       </div>
       <div class="badge">
         <div class="top"><span>CDS OFFLINE</span><span>#04</span></div>
-        <div class="photo ph">[ photo ]</div>
+        <div class="photo"><span class="ph">[ photo ]</span></div>
         <div class="body"><div class="name ph">[ Name ]</div><div class="role">Secretary</div></div>
       </div>
       <div class="badge">
         <div class="top"><span>CDS OFFLINE</span><span>#05</span></div>
-        <div class="photo ph">[ photo ]</div>
+        <div class="photo"><span class="ph">[ photo ]</span></div>
         <div class="body"><div class="name ph">[ Name ]</div><div class="role">Co-VP (Abroad)</div></div>
       </div>
     </div>
@@ -354,10 +361,10 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
     <h2>Where we've been.</h2>
     <div class="wall">
       <!-- swap .pic for an <img> when you have photos -->
-      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
-      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
-      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
-      <div class="polaroid"><div class="pic ph">[ photo ]</div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic"><span class="ph">[ photo ]</span></div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic"><span class="ph">[ photo ]</span></div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic"><span class="ph">[ photo ]</span></div><div class="cap ph">[ caption ]</div></div>
+      <div class="polaroid"><div class="pic"><span class="ph">[ photo ]</span></div><div class="cap ph">[ caption ]</div></div>
     </div>
   </div>
 </section>
@@ -395,7 +402,7 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
         <div class="ok" id="ok"><b>You're in.</b>We'll email you about the next meetup. See you offline.</div>
       </div>
       </div>
-      <svg class="join-mark" aria-hidden="true"><use href="#outlet"></use></svg>
+      <svg class="join-mark" viewBox="0 0 132 96" aria-hidden="true"><use href="#outlet"></use></svg>
     </div>
   </section>
 </div>
@@ -413,6 +420,8 @@ html[data-palette="midnight"] .blob::after{mix-blend-mode:screen}
 /* ===== INK SWITCHER (live palette demo) ===== */
 const root = document.documentElement;
 document.querySelectorAll('.swatch[data-set]').forEach(btn=>{
+  // sync pressed state from the html default so changing data-palette needs no HTML edits here
+  btn.setAttribute('aria-pressed', btn.dataset.set===root.getAttribute('data-palette'));
   btn.addEventListener('click',()=>{
     root.setAttribute('data-palette', btn.dataset.set);
     document.querySelectorAll('.swatch[data-set]').forEach(b=>b.setAttribute('aria-pressed', b===btn));

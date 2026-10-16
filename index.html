@@ -149,8 +149,7 @@ h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-heigh
 .member-bio{max-width:52ch;font-size:.95rem;color:var(--muted)}
 .pic img{width:100%;height:100%;object-fit:cover;position:relative;z-index:1}
 
-.event-link{flex-shrink:0}
-.event-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:12px 16px;border:2px solid var(--ink-ui);color:var(--ink-ui);font-family:"Space Mono",monospace;font-size:.74rem;text-decoration:none}
+.event-link{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:12px 16px;border:2px solid var(--ink-ui);color:var(--ink-ui);font-family:"Space Mono",monospace;font-size:.74rem;text-decoration:none}
 .event-link:hover{background:var(--ink-ui);color:var(--paper)}
 
 .wall{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:start;gap:32px 24px;margin-top:28px}
@@ -182,8 +181,12 @@ html:has(.event-dialog[open]){overflow:hidden}
 .join .kicker{color:var(--paper)}
 .join h2{color:var(--paper)}
 .join .sub{max-width:42ch;margin-top:8px;font-size:1.1rem}
-.sheet{background:var(--paper);color:var(--text);border:2.5px solid var(--line);box-shadow:7px 8px 0 rgba(0,0,0,.25);margin-top:28px;max-width:560px;padding:30px}
-.join-cta{display:block;width:100%;background:var(--ink-ui);color:var(--paper);border:2px solid var(--ink-ui);font-family:"Space Mono",monospace;font-size:.82rem;text-align:center;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;padding:14px;transition:transform .1s}
+.sheet{background:var(--paper);color:var(--text);border:2.5px solid var(--line);box-shadow:7px 8px 0 rgba(0,0,0,.25);margin-top:28px;max-width:640px;padding:24px}
+.join-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.action-note{margin-top:10px;font-size:.85rem;line-height:1.5;color:var(--muted)}
+.join-cta{display:flex;align-items:center;justify-content:center;min-height:64px;height:100%;width:100%;background:var(--ink-ui);color:var(--paper);border:2px solid var(--ink-ui);font-family:"Space Mono",monospace;font-size:.78rem;line-height:1.5;text-align:center;text-decoration:none;text-transform:uppercase;letter-spacing:.04em;padding:12px;transition:transform .1s}
+.join-action{display:grid;grid-template-rows:1fr auto}
+.join-cta.secondary{background:transparent;color:var(--ink-ui)}
 .join-cta:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink-2)}
 .join-note{margin-top:13px;font-family:"Space Mono",monospace;font-size:.68rem;color:var(--muted);text-align:center}
 
@@ -222,6 +225,8 @@ html:has(.event-dialog[open]){overflow:hidden}
   .member-bio{grid-column:2}
 }
 @media(max-width:520px){
+  .join-actions{grid-template-columns:1fr;gap:20px}
+  .join-cta{min-height:52px}
   .wrap{padding-left:16px;padding-right:16px}
   .masthead .bar{gap:8px}
   .wall{grid-template-columns:1fr;gap:32px;max-width:360px;margin-left:auto;margin-right:auto}
@@ -392,11 +397,20 @@ if(faviconUrl) document.getElementById('siteIcon').href=faviconUrl[1];
       <div class="join-copy">
       <p class="kicker mono">04 / Join</p>
       <h2>Come offline with us.</h2>
-      <p class="sub">Use our short Google Form to join the club and hear about upcoming events.</p>
+      <p class="sub">Join the club or register for a weekly meetup.</p>
 
       <div class="sheet">
-        <a class="join-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSd7MxsxU7dRExb4dWxHcAqGkV4s2dCkFuH3tA1cnVy-fqR-xQ/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">Join the club →</a>
-        <p class="join-note">Opens in Google Forms.</p>
+        <div class="join-actions">
+          <div class="join-action">
+            <a class="join-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSd7MxsxU7dRExb4dWxHcAqGkV4s2dCkFuH3tA1cnVy-fqR-xQ/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" aria-describedby="club-note">Join the club ↗</a>
+            <p class="action-note" id="club-note">Hear about upcoming events.</p>
+          </div>
+          <div class="join-action">
+            <a class="join-cta secondary" href="https://docs.google.com/forms/d/e/1FAIpQLSep9uFG3tes--h5QwH2zniWqpw1rHEiFcSdTpuqxh_bRFIYmQ/viewform" target="_blank" rel="noopener noreferrer" aria-describedby="weekly-note">Weekly registration ↗</a>
+            <p class="action-note" id="weekly-note">Google sign-in required.</p>
+          </div>
+        </div>
+        <p class="join-note">Both open in Google Forms in a new tab.</p>
       </div>
       </div>
       <span class="join-mark" aria-hidden="true"></span>
